@@ -1,0 +1,23 @@
+# Android
+android/local.properties
+android/app/google-services.json
+android/.idea/
+android/.gradle/
+android/build/
+android/app/build/
+android/*.iml
+
+# Python
+server/.env
+server/__pycache__/
+server/venv/
+server/*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+*.apk
+*.aab
+*.dex
