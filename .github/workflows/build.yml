@@ -3,8 +3,6 @@ name: Build Android APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -25,38 +23,23 @@ jobs:
       uses: android-actions/setup-android@v3
 
     - name: Create local.properties
-      run: |
-        echo "sdk.dir=$ANDROID_HOME" > android/local.properties
-        echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> android/local.properties
-        echo "CEREBRAS_API_KEY=${{ secrets.CEREBRAS_API_KEY }}" >> android/local.properties
-        echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> android/local.properties
-        echo "HUGGINGFACE_API_KEY=${{ secrets.HUGGINGFACE_API_KEY }}" >> android/local.properties
+      run: echo "sdk.dir=$ANDROID_HOME" > android/local.properties
 
     - name: Create google-services.json
-      run: |
-        echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
+      run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
 
     - name: Grant execute permission for gradlew
-      run: chmod +x android/gradlew
+      run: |
+        cd android
+        chmod +x gradlew
 
-    - name: Build Debug APK
+    - name: Build APK
       run: |
         cd android
         ./gradlew clean assembleDebug
 
-    - name: Upload Debug APK
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
         path: android/app/build/outputs/apk/debug/*.apk
-
-    - name: Build Release APK
-      run: |
-        cd android
-        ./gradlew clean assembleRelease
-
-    - name: Upload Release APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release
-        path: android/app/build/outputs/apk/release/*.apk
