@@ -1,0 +1,8 @@
+android/local.properties
+android/app/google-services.json
+.DS_Store
+*.iml
+.idea/
+build/
+*.apk
+*.aab
