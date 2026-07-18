@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZakyAI - لوحة التحكم</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--card:#161616;--text:#f0f0f0;--muted:#888;--accent1:#6c5ce7;--accent2:#00b894;--danger:#ff6b6b;--success:#00b894;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.layout{display:flex;min-height:100vh}
+aside{width:240px;background:var(--card);padding:24px 16px;position:sticky;top:0;height:100vh;border-left:1px solid #2a2a2a}
+aside h1{font-size:24px;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:32px}
+nav a{display:flex;align-items:center;gap:12px;color:var(--muted);text-decoration:none;padding:12px 16px;border-radius:12px;margin-bottom:4px;transition:0.2s}
+nav a:hover,nav a.active{background:rgba(108,92,231,0.15);color:var(--text)}
+main{flex:1;padding:28px 32px}
+.top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.top-row h2{font-size:26px;font-weight:900}
+.grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--card);border-radius:16px;padding:20px;border:1px solid #262626}
+.stat-card i{font-size:22px;color:var(--accent1);margin-bottom:8px;display:block}
+.stat-card .value{font-size:32px;font-weight:900}
+.stat-card .label{color:var(--muted);font-size:13px;margin-top:4px}
+section{background:var(--card);border-radius:16px;padding:20px;margin-bottom:24px;border:1px solid #262626}
+section h3{margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px 8px;text-align:right;border-bottom:1px solid #262626}
+th{color:var(--muted);font-weight:500}
+.badge{padding:3px 12px;border-radius:999px;font-size:12px}
+.badge.active{background:rgba(0,184,148,0.15);color:var(--success)}
+.badge.inactive{background:rgba(255,107,107,0.15);color:var(--danger)}
+.btn{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:14px;transition:0.2s}
+.btn:hover{transform:scale(1.02);opacity:0.9}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:8px}
+.btn-danger{background:var(--danger)}
+input,select{background:#111;border:1px solid #333;color:var(--text);padding:8px 12px;border-radius:8px;font-family:inherit;width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:50}
+.modal-backdrop.show{display:flex}
+.modal{background:var(--card);border-radius:16px;padding:24px;width:380px;border:1px solid #333}
+.modal .field{margin-bottom:12px}
+@media(max-width:768px){aside{display:none}main{padding:16px}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <h1><i class="fa-solid fa-robot"></i> ZakyAI</h1>
+    <nav>
+      <a href="#" class="active" onclick="showTab('overview')"><i class="fa-solid fa-chart-line"></i> نظرة عامة</a>
+      <a href="#" onclick="showTab('users')"><i class="fa-solid fa-users"></i> المستخدمون</a>
+      <a href="#" onclick="showTab('models')"><i class="fa-solid fa-microchip"></i> النماذج</a>
+      <a href="#" onclick="showTab('conversations')"><i class="fa-solid fa-comments"></i> المحادثات</a>
+    </nav>
+  </aside>
+  <main>
+    <div class="top-row"><h2>لوحة التحكم</h2><div id="authStatus" style="color:var(--muted)">⏳ جاري الاتصال...</div></div>
+    <div class="grid-stats">
+      <div class="stat-card"><i class="fa-solid fa-users"></i><div class="value" id="statUsers">--</div><div class="label">المستخدمين</div></div>
+      <div class="stat-card"><i class="fa-solid fa-comments"></i><div class="value" id="statConversations">--</div><div class="label">المحادثات</div></div>
+      <div class="stat-card"><i class="fa-solid fa-microchip"></i><div class="value" id="statModels">--</div><div class="label">النماذج النشطة</div></div>
+    </div>
+    <section id="users-section"><h3>المستخدمون</h3><table><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>التسجيل</th></tr></thead><tbody id="usersBody"><tr><td colspan="4" style="color:var(--muted)">لا توجد بيانات</td></tr></tbody></table></section>
+    <section id="models-section"><h3>النماذج <button class="btn" onclick="openModal()"><i class="fa-solid fa-plus"></i> إضافة</button></h3><table><thead><tr><th>الاسم</th><th>النوع</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="modelsBody"><tr><td colspan="4" style="color:var(--muted)">لا توجد نماذج</td></tr></tbody></table></section>
+    <section id="conversations-section"><h3>المحادثات الأخيرة</h3><table><thead><tr><th>العنوان</th><th>المستخدم</th><th>الرسائل</th><th>آخر تحديث</th></tr></thead><tbody id="conversationsBody"><tr><td colspan="4" style="color:var(--muted)">لا توجد محادثات</td></tr></tbody></table></section>
+  </main>
+</div>
+<div class="modal-backdrop" id="modalBackdrop"><div class="modal"><h3 style="margin-bottom:16px">إضافة نموذج</h3><div class="field"><label>الاسم</label><input id="mName" placeholder="Llama 3.3"></div><div class="field"><label>رابط API</label><input id="mUrl" placeholder="https://..."></div><div class="field"><label>النوع</label><select id="mType"><option value="text">نص</option><option value="image">صورة</option></select></div><div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn btn-sm" style="background:#333" onclick="closeModal()">إلغاء</button><button class="btn btn-sm" onclick="addModel()">إضافة</button></div></div></div>
+<script>
+const firebaseConfig = { apiKey: "ضع_مفتاحك_هنا", authDomain: "your-project.firebaseapp.com", projectId: "your-project-id" };
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+onAuthStateChanged(auth, user => { if(user){ document.getElementById("authStatus").innerHTML = "✅ متصل"; loadAll(); } });
+signInAnonymously(auth);
+async function loadAll(){ await loadStats(); await loadUsers(); await loadModels(); await loadConversations(); }
+async function loadStats(){ const u=await getDocs(collection(db,"users")); const c=await getDocs(collection(db,"conversations")); const m=await getDocs(collection(db,"ai_models")); document.getElementById("statUsers").textContent=u.size; document.getElementById("statConversations").textContent=c.size; document.getElementById("statModels").textContent=m.docs.filter(d=>d.data().isActive).length; }
+async function loadUsers(){ const snap=await getDocs(collection(db,"users")); const body=document.getElementById("usersBody"); if(snap.empty)return; body.innerHTML=""; snap.forEach(d=>{const u=d.data(); body.innerHTML+=`<tr><td>${u.name||"—"}</td><td>${u.email||"—"}</td><td>${u.role||"user"}</td><td>${u.createdAt?new Date(u.createdAt).toLocaleDateString("ar-EG"):"—"}</td></tr>`;}); }
+async function loadModels(){ const snap=await getDocs(query(collection(db,"ai_models"),orderBy("order"))); const body=document.getElementById("modelsBody"); if(snap.empty)return; body.innerHTML=""; snap.forEach(d=>{const m=d.data(); body.innerHTML+=`<tr><td>${m.name}</td><td>${m.type}</td><td><span class="badge ${m.isActive?"active":"inactive"}">${m.isActive?"نشط":"معطل"}</span></td><td class="row"><button class="btn btn-sm" style="background:#333" onclick="toggleModel('${d.id}',${!m.isActive})">${m.isActive?"تعطيل":"تفعيل"}</button><button class="btn btn-sm btn-danger" onclick="deleteModel('${d.id}')">حذف</button></td></tr>`;}); }
+async function loadConversations(){ const snap=await getDocs(query(collection(db,"conversations"),orderBy("updatedAt","desc"))); const body=document.getElementById("conversationsBody"); if(snap.empty)return; body.innerHTML=""; snap.forEach(d=>{const c=d.data(); body.innerHTML+=`<tr><td>${c.title||"بدون عنوان"}</td><td>${c.userId?.substring(0,8)||"—"}</td><td>${c.messages?c.messages.length:0}</td><td>${c.updatedAt?new Date(c.updatedAt).toLocaleDateString("ar-EG"):"—"}</td></tr>`;}); }
+window.openModal=()=>document.getElementById("modalBackdrop").classList.add("show");
+window.closeModal=()=>document.getElementById("modalBackdrop").classList.remove("show");
+window.addModel=async()=>{const n=document.getElementById("mName").value.trim();const u=document.getElementById("mUrl").value.trim();const t=document.getElementById("mType").value;if(!n||!u)return alert("املأ جميع الحقول");await addDoc(collection(db,"ai_models"),{name:n,apiUrl:u,type:t,isActive:true,isDefault:false,order:Date.now()});closeModal();loadAll();};
+window.toggleModel=async(id,s)=>{await updateDoc(doc(db,"ai_models",id),{isActive:s});loadAll();};
+window.deleteModel=async(id)=>{if(!confirm("تأكيد الحذف؟"))return;await deleteDoc(doc(db,"ai_models",id));loadAll();};
+window.showTab=(tab)=>{document.querySelectorAll("section").forEach(s=>s.style.display="none");document.getElementById(tab+"-section").style.display="block";};
+document.querySelectorAll("section").forEach(s=>s.style.display="none");document.getElementById("overview-section").style.display="block";
+</script>
+</body></html>
