@@ -23,18 +23,21 @@ jobs:
       uses: android-actions/setup-android@v3
 
     - name: Create local.properties
-      run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+      run: echo "sdk.dir=$ANDROID_HOME" > android/local.properties
 
     - name: Create google-services.json
-      run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
+      run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
+
+    - name: Grant execute permission
+      run: chmod +x android/gradlew
 
     - name: Build APK
       run: |
-        chmod +x gradlew
-        ./gradlew clean assembleDebug
+        cd android
+        ./gradlew clean assembleDebug --no-daemon
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/*.apk
+        path: android/app/build/outputs/apk/debug/*.apk
