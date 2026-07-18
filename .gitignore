@@ -21,3 +21,5 @@ Thumbs.db
 *.apk
 *.aab
 *.dex
+server/.env
+server/.env

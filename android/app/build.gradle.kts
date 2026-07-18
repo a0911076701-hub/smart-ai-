@@ -17,6 +17,31 @@ if (localPropertiesFile.exists()) {
 fun secret(key: String): String = localProperties.getProperty(key) ?: ""
 
 android {
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("/data/data/com.termux/files/home/keystore/zakyai.jks")
+            storePassword = "123456"
+            keyAlias = "zakyai"
+            keyPassword = "123456"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    }
+
+    buildTypes {
+    }
     namespace = "com.yourcompany.appname"
     compileSdk = 35
 
