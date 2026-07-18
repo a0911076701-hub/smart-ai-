@@ -1,0 +1,16 @@
+# Android
+android/local.properties
+android/app/google-services.json
+*.iml
+.gradle/
+/android/build/
+/android/app/build/
+.idea/
+
+# Python
+server/.env
+server/__pycache__/
+server/venv/
+
+# عام
+.DS_Store

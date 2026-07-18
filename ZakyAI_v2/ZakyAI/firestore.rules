@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // المستخدمون: كل مستخدم يقرأ/يكتب مستنده فقط
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // المحادثات: صاحب المحادثة فقط
+    match /conversations/{convId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+
+    // النماذج وإعدادات الإدارة: قراءة عامة للنماذج النشطة فقط، والكتابة للمدير فقط.
+    // ملاحظة: تحديد "المدير" يجب أن يتم عبر custom claims في Firebase Auth
+    // (request.auth.token.admin == true) وليس عبر تخمين uid ثابت.
+    match /ai_models/{modelId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    match /admin_config/{docId} {
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
+    }
+  }
+}

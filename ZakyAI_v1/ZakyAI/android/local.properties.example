@@ -1,0 +1,8 @@
+# انسخ هذا الملف باسم local.properties (بدون .example) وضع مفاتيحك الحقيقية هنا.
+# local.properties موجود بالفعل في .gitignore ولن يُرفع إلى أي مستودع.
+sdk.dir=/path/to/your/Android/sdk
+
+GROQ_API_KEY=ضع_مفتاح_Groq_هنا
+HUGGINGFACE_API_KEY=ضع_مفتاح_HuggingFace_هنا
+CEREBRAS_API_KEY=ضع_مفتاح_Cerebras_هنا
+OPENROUTER_API_KEY=ضع_مفتاح_OpenRouter_هنا
